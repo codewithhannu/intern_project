@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fleet Monitoring Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    /* Include styles from App.css */
+    .dashboard {
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background-color: #282c34;
+      padding: 10px;
+      color: white;
+      text-align: center;
+    }
+
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 20px;
+    }
+
+    .map-view {
+      flex: 2;
+      margin-right: 20px;
+    }
+
+    .robot-details {
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .robot-details ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .robot-details li {
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .robot-details li.highlight {
+      background-color: #ffe6e6;
+    }
+
+    .marker-icon {
+      background-color: green;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      border: 2px solid white;
+    }
+
+    .marker-icon.low-battery {
+      background-color: orange;
+    }
+
+    .marker-icon.offline {
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <header>
+      <h1>Fleet Monitoring Dashboard</h1>
+    </header>
+
+    <div class="content">
+      <div class="map-view">
+        <div id="map" style="height: 500px; width: 100%;"></div>
+      </div>
+
+      <div class="robot-details">
+        <h2>Robot Details</h2>
+        <ul>
+          <li><strong>Robot 1</strong> - Online - Battery: 80%</li>
+          <li class="highlight"><strong>Robot 2</strong> - Online - Battery: 15%</li>
+          <li class="highlight"><strong>Robot 3</strong> - Offline - Battery: 100%</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Add map initialization logic
+    const map = L.map('map').setView([37.7749, -122.4194], 4);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const robots = [
+      { name: "Robot 1", lat: 37.7749, lng: -122.4194, battery: 80, online: true },
+      { name: "Robot 2", lat: 34.0522, lng: -118.2437, battery: 15, online: true },
+      { name: "Robot 3", lat: 40.7128, lng: -74.0060, battery: 100, online: false }
+    ];
+
+    robots.forEach(robot => {
+      const markerColor = !robot.online ? "red" : robot.battery < 20 ? "orange" : "green";
+      const marker = L.circleMarker([robot.lat, robot.lng], {
+        color: markerColor,
+        radius: 8,
+        fillOpacity: 1
+      }).addTo(map);
+
+      marker.bindPopup(`<strong>${robot.name}</strong><br>Battery: ${robot.battery}%<br>Status: ${robot.online ? "Online" : "Offline"}`);
+    });
+  </script>
+</body>
+</html>
